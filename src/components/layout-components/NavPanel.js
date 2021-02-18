@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
+// eslint-disable-next-line
 import { SettingOutlined } from '@ant-design/icons';
+// eslint-disable-next-line
 import { Drawer, Menu } from 'antd';
+// eslint-disable-next-line
 import ThemeConfigurator from './ThemeConfigurator';
 import { connect } from "react-redux";
 

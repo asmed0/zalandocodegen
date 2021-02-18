@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 import { SIDE_NAV_LIGHT, NAV_TYPE_SIDE } from 'constants/ThemeConstant';
 import { env } from './EnvironmentConfig'
 

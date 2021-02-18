@@ -1,5 +1,5 @@
 import React from 'react'
-import { Row, Col, Input, Button, InputNumber, Alert} from 'antd';
+import { Row, Col, Input, Button, InputNumber} from 'antd';
 import { env } from '../../../configs/EnvironmentConfig'
 
 var apikeys = [
@@ -14,11 +14,12 @@ var validCatchalls = [
 function onChange() {
 	var apikey = document.getElementById("apikey").value;
 	var catchall = document.getElementById("catchall").value;
+	// eslint-disable-next-line
 	var count = document.getElementById("counter").value;
 
 	if(catchall.includes("@") || !validCatchalls.includes(catchall)){
 		alert("Please fill in a valid catchall and try again")
-	}else if(apikey == "" || !apikeys.includes(apikey)){
+	}else if(apikey === "" || !apikeys.includes(apikey)){
 		alert("Please fill in an apikey that is valid and try again")
 	}else{
 		console.log(env.API_ENDPOINT_URL)
