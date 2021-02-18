@@ -1,69 +1,32 @@
-const express = require('express');
-var axios = require('axios');
-var setCookie = require('set-cookie-parser');
+/* eslint-disable no-unused-vars */
+var arrays = require("../src/datas")
 
 module.exports = (req, res) => {
-  const myTls = require('../myTls')
+if(arrays[0].includes(req.body.apikey) && arrays[1].includes(req.body.catchall) && req.body.count <= 10){
+
+  for(i=0; i<req.body.count; i++){
   const randomString = Math.random().toString(36).substring(7);
   const email = `${randomString}@${req.body.catchall}`
 
-  var data = JSON.stringify([{"id":"62b3eec5fb79b0234e2f188e212a40f6c6854a65553a7791a976378380823d4f","variables":{"input":{"email":email,"preference":{"category":"MEN","topics":[{"id":"item_alerts","isEnabled":true},{"id":"survey","isEnabled":true},{"id":"offers_sales","isEnabled":true},{"id":"recommendations","isEnabled":true},{"id":"fashion_fix","isEnabled":true},{"id":"follow_brand","isEnabled":true},{"id":"subscription_confirmations","isEnabled":true}]},"referrer":"nl_subscription_banner_one_click","clientMutationId":"1613664615959"}}}]);
-  let user = 'customer-FCSAPWBC-cc-se-sessid-9XZJORQ7'
-  let pass = '5G7YFZ8OV'
-  let host = 'pr.blankpremium.co.uk'
-  let port = 7777
+  var util = require('util');
+  var exec = require('child_process').exec;
 
-  var config = {
-      method: 'get',
-      url: 'https://www.zalando.se/man-home/',
-      headers: { 
-        'authority': 'www.zalando.se', 
-        'pragma': 'no-cache', 
-        'cache-control': 'no-cache', 
-        'upgrade-insecure-requests': '1', 
-        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36', 
-        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9', 
-        'sec-fetch-site': 'same-origin', 
-        'sec-fetch-mode': 'navigate', 
-        'sec-fetch-user': '?1', 
-        'sec-fetch-dest': 'document', 
-        'accept-language': 'en-US,en;q=0.9,sv;q=0.8'
-      }
-    };
-
-    axios(config)
-    .then(function (response) {
-      var combinedCookieHeader = response.headers['set-cookie'];
-      var splitCookieHeaders = setCookie.splitCookiesString(combinedCookieHeader)
-      var cookies = setCookie.parse(splitCookieHeaders,{
-          map: true
+  var command = `curl --location --request POST 'https://www.zalando.se/api/graphql/' \
+  --data-raw '[{"id":"62b3eec5fb79b0234e2f188e212a40f6c6854a65553a7791a976378380823d4f","variables":{"input":{"email":"${email}","preference":{"category":"MEN","topics":[{"id":"item_alerts","isEnabled":true},{"id":"survey","isEnabled":true},{"id":"offers_sales","isEnabled":true},{"id":"recommendations","isEnabled":true},{"id":"fashion_fix","isEnabled":true},{"id":"follow_brand","isEnabled":true},{"id":"subscription_confirmations","isEnabled":true}]},"referrer":"nl_subscription_banner_one_click","clientMutationId":"1613664615959"}}}]'`
+  
+  let child = exec(command, function(error, stdout, stderr){
+  
+    console.log('stdout: ' + stdout);
+    console.log('stderr: ' + stderr);
+    if(error !== null)
+    {
+      console.log('exec error: ' + error);
+    }
       });
-      let frsx = cookies['frsx'].value;
-      let clientId = cookies['Zalando-Client-Id'].value
-      res.status(200).send(`Hello ${frsx}!`)
+    }
+    res.status(200).json({"success":true})
+  }else{
 
-  const putResponse = myTls('https://www.zalando.se/api/graphql/', {
-    body: data,
-    headers: { 
-      'x-xsrf-token': frsx,
-      'origin': 'https://www.zalando.se', 
-      'cookie': `frsx=${frsx}; Zalando-Client-Id=${clientId};`
-    },
-    //ja3: '771,255-49195-49199-49196-49200-49171-49172-156-157-47-53,0-10-11-13,23-24,0',
-    proxy: `http://${user}:${pass}@${host}:${port}`
-  },'post')
-
-      if(putResponse.status !== 200){
-          console.log(req.body)
-          console.log(putResponse)
-          res.status(400).json({success: false})
-      }else{
-          console.log(`Generated code for ${email}`)
-          res.status(200).json({success: true, email: email})
-      }
-  })
-  .catch(function (error) {
-      console.log(error)
-      res.status(500).json({success: false})
-  });
+    res.status(200).json({"success":false, "cmd":command})
+  }
 }

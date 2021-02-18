@@ -1,28 +1,34 @@
+/* eslint-disable no-unused-vars */
 import React from 'react'
 import { Row, Col, Input, Button, InputNumber} from 'antd';
 import { env } from '../../../configs/EnvironmentConfig'
-
-var apikeys = [
-	"heyoo",
-	"vafan"
-]
-
-var validCatchalls = [
-	"catchalls.email",
-]
+var arrays = require("../../../datas")
 
 function onChange() {
 	var apikey = document.getElementById("apikey").value;
-	var catchall = document.getElementById("catchall").value;
-	// eslint-disable-next-line
+	var catchall = document.getElementById("catchall").value.toLowerCase();
 	var count = document.getElementById("counter").value;
 
-	if(catchall.includes("@") || !validCatchalls.includes(catchall)){
+	if(catchall.includes("@") || !arrays[1].includes(catchall)){
 		alert("Please fill in a valid catchall and try again")
-	}else if(apikey === "" || !apikeys.includes(apikey)){
+	}else if(apikey === "" || !arrays[0].includes(apikey)){
 		alert("Please fill in an apikey that is valid and try again")
 	}else{
-		console.log(env.API_ENDPOINT_URL)
+		var data = JSON.stringify({"catchall":catchall.toString(),"apikey":apikey.toString(),"count":count});
+
+		var xhr = new XMLHttpRequest();
+		xhr.withCredentials = true;
+
+		xhr.addEventListener("readystatechange", function() {
+		if(this.readyState === 4) {
+			console.log(this.responseText);
+		}
+		});
+
+		xhr.open("POST", document.location.origin + "/api/gencode");
+		xhr.setRequestHeader("Content-Type", "application/json");
+
+		xhr.send(data);
 	};
   };
 
