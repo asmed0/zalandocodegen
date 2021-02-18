@@ -22,20 +22,7 @@ export class NavPanel extends Component {
 	render() {
 		return (
       <>
-        <Menu mode="horizontal">
-          <Menu.Item onClick={this.showDrawer}>
-            <SettingOutlined className="nav-icon mr-0" />
-          </Menu.Item>
-        </Menu>
-        <Drawer
-          title="Theme Config"
-          placement="right"
-          width={350}
-          onClose={this.onClose}
-          visible={this.state.visible}
-        >
-          <ThemeConfigurator/>
-        </Drawer>
+
       </>
     );
 	}
