@@ -1,9 +1,11 @@
 const express = require('express');
 var axios = require('axios');
 var setCookie = require('set-cookie-parser');
-var myTls = require('../myTls')
 
 module.exports = (req, res) => {
+  (async () => {
+    const myTls = await initMyTls()
+    .then(console.log('myTls initated'));
   const randomString = Math.random().toString(36).substring(7);
   const email = `${randomString}@${req.params.catchall}`
 
@@ -71,5 +73,6 @@ module.exports = (req, res) => {
   .catch(function (error) {
       console.log(error)
       res.status(500).json({success: false})
-  }); 
+  });
+})();
 }
