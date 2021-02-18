@@ -3,11 +3,9 @@ var axios = require('axios');
 var setCookie = require('set-cookie-parser');
 
 module.exports = (req, res) => {
-  (async () => {
-    const myTls = await initMyTls()
-    .then(console.log('myTls initated'));
+  const myTls = require('../myTls')
   const randomString = Math.random().toString(36).substring(7);
-  const email = `${randomString}@${req.params.catchall}`
+  const email = `${randomString}@${req.body.catchall}`
 
   var data = JSON.stringify([{"id":"62b3eec5fb79b0234e2f188e212a40f6c6854a65553a7791a976378380823d4f","variables":{"input":{"email":email,"preference":{"category":"MEN","topics":[{"id":"item_alerts","isEnabled":true},{"id":"survey","isEnabled":true},{"id":"offers_sales","isEnabled":true},{"id":"recommendations","isEnabled":true},{"id":"fashion_fix","isEnabled":true},{"id":"follow_brand","isEnabled":true},{"id":"subscription_confirmations","isEnabled":true}]},"referrer":"nl_subscription_banner_one_click","clientMutationId":"1613664615959"}}}]);
   let user = 'customer-FCSAPWBC-cc-se-sessid-9XZJORQ7'
@@ -34,7 +32,7 @@ module.exports = (req, res) => {
     };
 
     axios(config)
-    .then(async function (response) {
+    .then(function (response) {
       var combinedCookieHeader = response.headers['set-cookie'];
       var splitCookieHeaders = setCookie.splitCookiesString(combinedCookieHeader)
       var cookies = setCookie.parse(splitCookieHeaders,{
@@ -42,26 +40,20 @@ module.exports = (req, res) => {
       });
       let frsx = cookies['frsx'].value;
       let clientId = cookies['Zalando-Client-Id'].value
+      res.status(200).send(`Hello ${frsx}!`)
 
-  const putResponse = await myTls('https://www.zalando.se/api/graphql/', {
+  const putResponse = myTls('https://www.zalando.se/api/graphql/', {
     body: data,
     headers: { 
       'x-xsrf-token': frsx,
-      'content-type': 'application/json', 
-      'accept': '/*', 
       'origin': 'https://www.zalando.se', 
-      'sec-fetch-site': 'same-origin', 
-      'sec-fetch-mode': 'cors', 
-      'sec-fetch-dest': 'empty', 
-      'referer': 'https://www.zalando.se/man-home/', 
-      'accept-language': 'en-US,en;q=0.9,sv;q=0.8', 
       'cookie': `frsx=${frsx}; Zalando-Client-Id=${clientId};`
     },
     //ja3: '771,255-49195-49199-49196-49200-49171-49172-156-157-47-53,0-10-11-13,23-24,0',
     proxy: `http://${user}:${pass}@${host}:${port}`
   },'post')
 
-      if(await putResponse.status !== 200){
+      if(putResponse.status !== 200){
           console.log(req.body)
           console.log(putResponse)
           res.status(400).json({success: false})
@@ -74,5 +66,4 @@ module.exports = (req, res) => {
       console.log(error)
       res.status(500).json({success: false})
   });
-})();
 }

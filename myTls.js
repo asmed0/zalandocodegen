@@ -1,7 +1,8 @@
 const initMyTls = require('mytls');
+var myTls;
 
 (async () => {
-    const myTls = await initMyTls()
+    myTls = await initMyTls()
     .then(console.log('myTls initated'));
 })();
 
